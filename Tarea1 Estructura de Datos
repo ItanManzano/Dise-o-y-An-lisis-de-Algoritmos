@@ -1,0 +1,116 @@
+class Nodo:
+    def __init__(self, valor):  
+        self.valor = valor
+        self.izquierda = None
+        self.centro = None
+        self.derecha = None
+
+    def agregar_nodo(self, valor, rama):
+        nuevo_nodo = Nodo(valor)
+        if rama == "izquierda":
+            self.izquierda = nuevo_nodo
+        elif rama == "centro":
+            self.centro = nuevo_nodo
+        elif rama == "derecha":
+            self.derecha = nuevo_nodo
+        else:
+            print("Rama no válida. Usa 'izquierda', 'centro' o 'derecha'.")
+
+    def agregar_nodo_null(self, rama):
+        if rama == "izquierda":
+            self.izquierda = Nodo(None)
+        elif rama == "centro":
+            self.centro = Nodo(None)
+        elif rama == "derecha":
+            self.derecha = Nodo(None)
+        else:
+            print("Rama no válida. Usa 'izquierda', 'centro' o 'derecha'.")
+
+    def pivote(self, direccion):
+        if direccion == "izquierda":
+            if self.izquierda is not None:
+                return self.izquierda
+            else:
+                print("No hay nodo a la izquierda.")
+                return self
+        elif direccion == "centro":
+            if self.centro is not None:
+                return self.centro
+            else:
+                print("No hay nodo en el centro.")
+                return self
+        elif direccion == "derecha":
+            if self.derecha is not None:
+                return self.derecha
+            else:
+                print("No hay nodo a la derecha.")
+                return self
+        else:
+            print("Dirección no válida. Usa 'izquierda', 'centro' o 'derecha'.")
+            return self
+
+    def imprimir_valor(self):
+        print(f"Valor del nodo actual: {self.valor}")
+
+class Pivote:
+    def __init__(self, nodo_inicial):  
+        self.nodo_actual = nodo_inicial
+        self.historial = [nodo_inicial]  # Mantener un historial de nodos visitados
+        self.indice_historial = 0
+
+    def moverse(self, direccion):
+        nuevo_nodo = self.nodo_actual.pivote(direccion)
+        if nuevo_nodo != self.nodo_actual:
+            self.nodo_actual = nuevo_nodo
+            self.indice_historial = len(self.historial)  # Limpiar el historial después de avanzar
+            self.historial.append(self.nodo_actual)
+        return self.nodo_actual
+
+    def regresar(self):
+        if self.indice_historial > 0:
+            self.indice_historial -= 1
+            self.nodo_actual = self.historial[self.indice_historial]
+        else:
+            print("No puedes retroceder más.")
+        return self.nodo_actual
+
+    def imprimir_valor(self):
+        self.nodo_actual.imprimir_valor()
+
+# Crear el árbol
+head = Nodo(20)
+head.agregar_nodo(23, "izquierda")
+head.agregar_nodo(19, "centro")
+head.agregar_nodo_null("derecha")
+
+head.izquierda.agregar_nodo_null("izquierda")
+head.izquierda.agregar_nodo(57, "centro")
+head.izquierda.agregar_nodo_null("derecha")
+
+head.centro.agregar_nodo_null("izquierda")
+head.centro.agregar_nodo_null("centro")
+head.centro.agregar_nodo(67, "derecha")
+
+head.centro.derecha.agregar_nodo_null("izquierda")
+head.centro.derecha.agregar_nodo(99, "centro")
+head.centro.derecha.agregar_nodo_null("derecha")
+
+# Movimiento entre nodos
+pivote = Pivote(head)
+pivote.imprimir_valor()  # Imprime el valor del nodo head
+
+print("Nos desplazamos para el valor que queremos que es 57")
+pivote.moverse("izquierda")
+pivote.moverse("centro")
+pivote.imprimir_valor()  # Imprime el valor del nodo 57
+
+print("Regresamos al inicio")
+pivote.regresar()
+pivote.regresar()
+
+print("Nos movemos hasta el final donde esta el valor que queremos que es 99")
+pivote.moverse("centro")
+pivote.moverse("derecha")
+pivote.moverse("centro")
+
+pivote.imprimir_valor()  # Imprime el valor del nodo 99
